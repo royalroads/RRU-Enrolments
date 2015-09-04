@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/rru/db" VERSION="20120912" COMMENT="XMLDB file for Moodle enrol/rru"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="rru_enrolments" COMMENT="RRU enrolments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="mdlcourseidnumber"/>
+        <FIELD NAME="mdlcourseidnumber" TYPE="char" LENGTH="45" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="mdluseridnumber"/>
+        <FIELD NAME="mdluseridnumber" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mdlcourseidnumber" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="5" SEQUENCE="false" PREVIOUS="mdluseridnumber" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="250" NOTNULL="true" SEQUENCE="false" PREVIOUS="roleid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="mdl_rru_enrolments_coursecode_ix" UNIQUE="false" FIELDS="mdlcourseidnumber" NEXT="mdl_rru_enrolments_usercode_ix"/>
+        <INDEX NAME="mdl_rru_enrolments_usercode_ix" UNIQUE="false" FIELDS="mdluseridnumber" PREVIOUS="mdl_rru_enrolments_coursecode_ix"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
