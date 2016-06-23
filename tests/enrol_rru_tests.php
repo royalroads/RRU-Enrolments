@@ -57,11 +57,11 @@ class enrol_rru_test extends advanced_testcase {
                         'fullname' => 'Mastering Moodle')); // test_populate_source() depends on this course fullname existing
 
         // Create three dummy users.
-        $this->user  = $this->getDataGenerator()->create_user(array('email' => 'gerald.albion@royalroads.ca',
+        $this->user  = $this->getDataGenerator()->create_user(array('email' => 'test@example.com',
                         'username' => 'rruenroltestuser'));
-        $this->user2 = $this->getDataGenerator()->create_user(array('email' => 'gerald.albion@royalroads.ca',
+        $this->user2 = $this->getDataGenerator()->create_user(array('email' => 'test@example.com',
                         'username' => 'rruenroltestuser2'));
-        $this->user3 = $this->getDataGenerator()->create_user(array('email' => 'gerald.albion@royalroads.ca',
+        $this->user3 = $this->getDataGenerator()->create_user(array('email' => 'test@example.com',
                         'username' => 'rruenroltestuser3'));
 
         $this->test_enrol = new enrol_rru_plugin;
