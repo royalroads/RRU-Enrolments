@@ -26,6 +26,12 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+/**
+* Require our notification/email class
+**/
+require_once('../classes/notification.php');
+
 /**
  * enrol class for students source, extends rru_source
  *
@@ -98,12 +104,32 @@ class students_enrol_rru_source extends enrol_rru_source {
                 return false;
             }
 
+
+
             // Get student role id.
             $studentroleid = $DB->get_field('role', 'id', array('archetype' => 'student'), MUST_EXIST);
 
             // Get the data in the correct format for enrol_rru plugin to deal with it.
             $enrolments = array();
+
+            /* 
+            * Keep track of SIS offerings that
+            * do not have a corresponding Moodle shell
+            **/
+            $orphans = [];
+
             while($row = mssql_fetch_assoc($result)) {
+            
+                // Check if chrCourse_Code is an orphaned offering (if not already identified)
+                if(!in_array($row['chrCourse_Code'], $orphans)) {
+                    try { 
+                        $shell = $DB->get_record('course',array('idnumber' => $row['chrCourse_Code']),MUST_EXIST); 
+                    } catch(dml_exception $e) { 
+                        $orphans[] = $row['chrCourse_Code']; 
+                    }
+                }
+
+
                 // Format enrolments.
                 $enrolment = array();
                 $enrolment['chrCourseCode'] = $row['chrCourse_Code'];
@@ -113,7 +139,11 @@ class students_enrol_rru_source extends enrol_rru_source {
                 $enrolments[] = $enrolment;
             }
 
+            // Notify the "authorities" if orphans exist
+            count($orphans) > 0 ? rru_enrol\notifications::send($orphans) : null;
+
             return $enrolments;
+
         }else {
             $this->write_log("Connection not established", true);
             return false;
