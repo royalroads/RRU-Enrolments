@@ -15,7 +15,8 @@ class notification {
 		$headers .= "Content-type: text/html\r\n";
 
 		// Create body
-		$body = "<h1>RRU Enroll Error!</h1>The following SIS courses are not reflected in Moodle:<p></p>";
+		$body = "<h1>RRU Enroll Error!</h1>The courses listed below exist in your SIS, but do NOT exist in Moodle.<br>
+		As a direct result, some enrollments may have been missed!<p></p>";
 		foreach($orphans AS $orphan) {
 			$body .= $orphan . "<br>";
 		}
