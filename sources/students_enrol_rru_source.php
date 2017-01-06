@@ -30,7 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
 * Require our notification/email class
 **/
-require_once('../classes/notification.php');
+require_once(dirname(dirname(__FILE__)) . '/classes/notification.php');
+
 
 /**
  * enrol class for students source, extends rru_source
@@ -120,13 +121,15 @@ class students_enrol_rru_source extends enrol_rru_source {
 
             while($row = mssql_fetch_assoc($result)) {
             
-                // Check if chrCourse_Code is an orphaned offering (if not already identified)
+                // Check if chrCourse_Code is an orphaned offering (only if not already identified as such)
                 if(!in_array($row['chrCourse_Code'], $orphans)) {
-                    try { 
-                        $shell = $DB->get_record('course',array('idnumber' => $row['chrCourse_Code']),MUST_EXIST); 
-                    } catch(dml_exception $e) { 
-                        $orphans[] = $row['chrCourse_Code']; 
+
+                    $shell = $DB->record_exists('course',array('idnumber' => $row['chrCourse_Code']));
+
+                    if(!$shell) {
+                        $orphans[] = $row['chrCourse_Code'];
                     }
+
                 }
 
 
@@ -139,8 +142,8 @@ class students_enrol_rru_source extends enrol_rru_source {
                 $enrolments[] = $enrolment;
             }
 
-            // Notify the "authorities" if orphans exist
-            count($orphans) > 0 ? rru_enrol\notifications::send($orphans) : null;
+            // Notify "the authorities" if orphans exist
+            count($orphans) > 0 ? rru_enrol\notification::send($orphans) : null;
 
             return $enrolments;
 
