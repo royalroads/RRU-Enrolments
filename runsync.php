@@ -15,22 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * GUI sync for RRU enrolments synchronization.
  *
- * Sample cron entry:
- * # 15 minutes past 10am
- * 15 10 * * * $sudo -u www-data /usr/bin/php /var/www/moodle/enrol/rru/cli/sync.php
- *
- * Notes:
- *   - it is required to use the web server account when executing PHP CLI scripts
- *   - you need to change the "www-data" to match the apache user account
- *   - use "su" if "sudo" not available
- *
- * 2012-08-23
+ * 2017-01-05
  * @package    enrol
  * @subpackage rru
  * @author     Gerald Albion, Andy Zoltay
- * @copyright  2016 Royal Roads University - based on Petr Skoda's code
+ * @copyright  2017 Royal Roads University - based on Petr Skoda's code
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
