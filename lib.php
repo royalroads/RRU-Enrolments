@@ -39,6 +39,7 @@ class enrol_rru_plugin extends enrol_plugin {
 
     private $errors;
     protected $enroltype = 'enrol_rru';
+    public $displaylog = false; // When true, log writer also displays its output to console.
 
     /**
      * Constructor for the plugin.
@@ -439,6 +440,11 @@ class enrol_rru_plugin extends enrol_plugin {
             $entry = date('Y-m-d H:i:s') . ' - ERROR - ' . $message . "\r\n";
         } else {
             $entry = date('Y-m-d H:i:s') . ' - ' . $message . "\r\n";
+        }
+
+        // Also output to console if configured to do so.
+        if ($this->displaylog) {
+            print "{$entry}<br/>";
         }
 
         if (file_put_contents($destination, $entry, FILE_APPEND)) {

@@ -72,6 +72,21 @@ if ($ADMIN->fulltree) {
           $settings->add(new admin_setting_configtext($key, $source_setting['description'], $source_setting['help_text'], $source_setting['default']));
         }
     }
+
+    // Add enrolment sync button
+    $name = 'enrol_rru/sync';
+    $title = get_string('manageenrolmentsync', 'enrol_rru'); // Manage Enrolment sync
+    $url = $CFG->wwwroot . '/enrol/rru/runsync.php';
+    $description = "<div class='form-item'>
+                      <div class='form-label'><label>".get_string('syncsettingcaption', 'enrol_rru')."</label></div>
+                          <div class='form-setting'>
+                          <a href=\"{$url}\">
+                          <button type=\"button\">".get_string('runenrolmentsync', 'enrol_rru')."</button>
+                        </a><br/>".get_string('runenrolmentsynchelp', 'enrol_rru')."
+                                    </div>
+                    </div>";
+    $setting = new admin_setting_heading($name, $title, $description);
+    $settings->add($setting);
 }
 
 

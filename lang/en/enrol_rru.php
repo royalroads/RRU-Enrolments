@@ -32,9 +32,16 @@ $string['mischeader'] = "Miscellaneous Settings";
 $string['email'] = "Error notification email (Non-Moodle account)";
 $string['email_help'] = "Send error notifications to this email address";
 $string['logpath'] = "Log file location";
+
 //AZRevisit - find out what the correct web account is that writes to the file system
 $string['logpath_help'] = "Path on the web server where RRU enrolments plugin will write the log file. Make sure the folder is writable by the account your web server is running under";
-
+$string['manageenrolmentsync'] = 'Manage enrolment sync';
+$string['syncsettingcaption'] = 'Enrolment sync management';
+$string['runenrolmentsync'] = 'Run enrolment sync';
+$string['runenrolmentsynchelp'] = 'Click to manually run the RRU enrolment sync now.';
+$string['returntosettings'] = 'Return to RRU Enrolment settings page';
+$string['syncresultsheader'] = 'Manual enrolment sync results';
+$string['plugindisabled'] = 'RRU Enrolment plugin is disabled, sync is disabled';
 
 // Student Enrolment
 $string['source_student_enrolment'] = "Source - Student Enrolment (Agresso)";
