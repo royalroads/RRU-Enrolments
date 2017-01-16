@@ -260,8 +260,21 @@ class enrol_rru_plugin extends enrol_plugin {
 
             $results = $DB->get_recordset_sql($sql);
             foreach ($results as $course) {
-                // Create a new one if one doesn't exist.
-                if ($this->add_instance($course)) {
+                // Try to create a new one if one doesn't exist.
+                try {
+                    $addresult = $this->add_instance($course);
+                } catch (Exception $e) {
+                    $addresult = false;
+                    $errormessage  = "Exception caught trying to add RRU enrol instance.\n";
+                    $errormessage .= "Exception Message: " . $e->getMessage() . "\n";
+                    $errormessage .= "\$course object:\n";
+                    $errormessage .= print_r($course,true) . "\n";
+
+                    $this->write_log($errormessage);
+                    echo $errormessage;
+
+                }
+                if ($addresult) {
                     $this->write_log("Added RRU enrol instance for $course->mdlcourseidnumber");
                 } else {
                     $this->write_log("Failed to add RRU enrol instance for $course->mdlcourseidnumber", true);
