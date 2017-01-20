@@ -143,7 +143,7 @@ class students_enrol_rru_source extends enrol_rru_source {
             }
 
             // Notify "the authorities" if orphans exist
-            count($orphans) > 0 ? rru_enrol\notification::send($orphans) : null;
+            // count($orphans) > 0 ? rru_enrol\notification::send($orphans) : null;
 
             return $enrolments;
 
