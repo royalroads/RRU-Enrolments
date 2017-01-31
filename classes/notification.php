@@ -29,8 +29,8 @@
 */
 class notification {
 
-	private $from = "moodleadmin@royalroads.ca";
-	private $subject = "RRU Enrolment Notification";
+	private static $from = "moodleadmin@royalroads.ca";
+	private static $subject = "RRU Enrolment Notification";
 
 
 	/**
@@ -38,7 +38,7 @@ class notification {
 	* Extract a list of valid email address
 	* @return $recipients - array of valid email addresses
 	*/
-	private function getRecipients() {
+	private static function getRecipients() {
 		
 		$recipients = array();
 
@@ -73,7 +73,7 @@ class notification {
 		* First, let's create the email itself
 		* Let's start off with some basic headers
 		*/
-		$headers = "From:" . $this->from . "\r\n";		
+		$headers = "From:" . self::$from . "\r\n";		
 		$headers .= "MIME-VERSION: 1.0\r\n";
 		$headers .= "Content-type: text/html\r\n";
 
@@ -91,17 +91,17 @@ class notification {
 		}
 
 		// Update our email subject line if set
-		$subject !== null ? $this->subject = $subject : '';
+		$subject !== null ? self::$subject = $subject : '';
 
 		/**
 		* OK we have an email, a subject and from
 		* All we need is a list to "to's"...
 		*/
-		$recipients = $this->getRecipients();
+		$recipients = self::getRecipients();
 
 		// And now we send to each...
 		foreach($recipients AS $to) {
-			mail($to,$this->subject,$body,$headers);
+			mail($to,self::$subject,$body,$headers);
 		}
 	
 	}
