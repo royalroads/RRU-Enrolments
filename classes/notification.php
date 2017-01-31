@@ -79,7 +79,7 @@ class notification {
 
 		// Set some content ...
 		$content = array(
-			'heading' => 	"<h1>RRU Enrolment Error<h1>",
+			'heading' => 	"<h1>RRU Enrolment Error</h1>",
 			'body' => 		"The following courses exist in your SIS, but not in Moodle.<br>
 							Consequently, no enrollments in these courses occurred!<p></p>"
 		);

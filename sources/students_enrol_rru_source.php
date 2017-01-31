@@ -135,8 +135,8 @@ class students_enrol_rru_source extends enrol_rru_source {
 
             // Notify "the authorities" if orphans exist
             if(count($orphans) > 0) {
-                $subkect = "RRU Enrolment Sync Issues";
-                enrol_rru\notification::send($orphans);
+                $subject = "RRU Enrolment Sync Anomalies";
+                enrol_rru\notification::send($orphans,$subject);
             }
 
 
