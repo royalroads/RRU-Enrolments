@@ -27,11 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
-* Require our notification/email class
-**/
-require_once(dirname(dirname(__FILE__)) . '/classes/notification.php');
-
 
 /**
  * enrol class for students source, extends rru_source
@@ -113,23 +108,19 @@ class students_enrol_rru_source extends enrol_rru_source {
             // Get the data in the correct format for enrol_rru plugin to deal with it.
             $enrolments = array();
 
-            /* 
-            * Keep track of SIS offerings that
-            * do not have a corresponding Moodle shell
-            **/
+            // Keep track of SIS offerings without a corresponding Moodle shell
             $orphans = [];
 
             while($row = mssql_fetch_assoc($result)) {
             
-                // Check if chrCourse_Code is an orphaned offering (only if not already identified as such)
+                /**
+                * if chrCourse_Code isn't in our orphan array
+                * check to see if it has a corresponding shell
+                * Add it to orphan array if it doesn't
+                */
                 if(!in_array($row['chrCourse_Code'], $orphans)) {
-
                     $shell = $DB->record_exists('course',array('idnumber' => $row['chrCourse_Code']));
-
-                    if(!$shell) {
-                        $orphans[] = $row['chrCourse_Code'];
-                    }
-
+                    !$shell ? $orphans[] = $row['chrCourse_Code'] : '';
                 }
 
 
@@ -143,7 +134,11 @@ class students_enrol_rru_source extends enrol_rru_source {
             }
 
             // Notify "the authorities" if orphans exist
-            // count($orphans) > 0 ? rru_enrol\notification::send($orphans) : null;
+            if(count($orphans) > 0) {
+                $subkect = "RRU Enrolment Sync Issues";
+                enrol_rru\notification::send($orphans);
+            }
+
 
             return $enrolments;
 

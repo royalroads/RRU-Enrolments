@@ -73,6 +73,50 @@ if ($ADMIN->fulltree) {
         }
     }
 
+
+
+
+    /**
+    * @author        Jacek Pawel Polus
+    * @copyright     2017 Royal Roads University
+    * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+    */
+
+    /**
+    * Add a new header to organize
+    * Current and Future notification settings
+    */
+    $name = "enrol_rru/notifications";
+    $label = get_string('ntf_header','enrol_rru');
+    $desc = "";
+
+    $heading = new admin_setting_heading($name,$label,$desc);
+    $settings->add($heading);
+
+
+            /**
+            * Setting:
+            * In case SIS tries to enrol students in a shell that doesn't exist
+            * notify this email
+            */
+            $name = "enrol_rru/sync_notification";
+            $label = get_string('ntf_sync_error_label','enrol_rru');
+            $desc = get_string('ntf_sync_error_desc','enrol_rru');
+            $default = '';
+
+            $setting = new admin_setting_configtext($name,$label,$desc,$default);
+            $settings->add($setting);
+
+
+
+
+
+
+    /**
+    * @author        Gerald Albion
+    * @copyright     2017 Royal Roads University
+    * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+    */
     // Add enrolment sync button
     $name = 'enrol_rru/sync';
     $title = get_string('manageenrolmentsync', 'enrol_rru'); // Manage Enrolment sync

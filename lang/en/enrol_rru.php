@@ -64,4 +64,8 @@ $string['rru:manage'] = 'Manage enrolled users';
 $string['rru:unenrol'] = 'Unenrol users from course';
 $string['rru:unenrolself'] = 'Unenrol self from the course';
 
-
+// Notifications
+$string['ntf_header'] = 'Notifications';
+$string['ntf_sync_error_label'] = "SIS/Moodle Sync Error";
+$string['ntf_sync_error_desc'] = "Email addresses (seperate with ';') that will be notified off sync error between SIS and Moodle";
+$string['ntf_sync_error_subject'] = "Mismatch between SIS and Moodle Shell";
