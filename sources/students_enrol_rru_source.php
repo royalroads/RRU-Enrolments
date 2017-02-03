@@ -120,8 +120,10 @@ class students_enrol_rru_source extends enrol_rru_source {
                 */
                 if(!in_array($row['chrCourse_Code'], $orphans)) {
                     $shell = $DB->record_exists('course',array('idnumber' => $row['chrCourse_Code']));
-                    !$shell ? $orphans[] = $row['chrCourse_Code'] : '';
-                    // Date $row['datCourseStart']
+                    if(!$shell) {
+                        $line = $row['chrCourse_Code'] . " (" . $row['datCourseStart'] . ")";
+                        $orphans[] = $line;
+                    }
                 }
 
 
