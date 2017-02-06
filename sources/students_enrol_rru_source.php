@@ -110,6 +110,8 @@ class students_enrol_rru_source extends enrol_rru_source {
 
             // Keep track of SIS offerings without a corresponding Moodle shell
             $orphans = [];
+            // This is the list we will send to whoever needs to be notified
+            $orphan_list = [];
 
             while($row = mssql_fetch_assoc($result)) {
             
@@ -121,8 +123,11 @@ class students_enrol_rru_source extends enrol_rru_source {
                 if(!in_array($row['chrCourse_Code'], $orphans)) {
                     $shell = $DB->record_exists('course',array('idnumber' => $row['chrCourse_Code']));
                     if(!$shell) {
+                        // Add to orphan list
+                        $orphans[] = $row['chrCourse_Code'];
+                        // Add to notification list
                         $line = $row['chrCourse_Code'] . " (" . $row['datCourseStart'] . ")";
-                        $orphans[] = $line;
+                        $orphan_list[] = $line;
                     }
                 }
 
@@ -139,7 +144,7 @@ class students_enrol_rru_source extends enrol_rru_source {
             // Notify "the authorities" if orphans exist
             if(count($orphans) > 0) {
                 $subject = "RRU Enrolment Sync Anomalies";
-                enrol_rru\notification::send($orphans,$subject);
+                enrol_rru\notification::send($orphan_list,$subject);
             }
 
 
