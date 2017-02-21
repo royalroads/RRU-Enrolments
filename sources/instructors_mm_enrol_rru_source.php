@@ -18,7 +18,7 @@
 /**
  * RRU enrolment , enrol instructors as students in Mastering Moodle Course
  *
- * 2017-02-20
+ * 2017-02-21
  * @package    enrol
  * @subpackage rru
  * @author     Gerald Albion, Andy Zoltay
@@ -257,7 +257,7 @@ LEFT JOIN mdl_course_categories cp ON cp.id = cc.parent
         $groupassignments = array();
 
         // Build a list of users for each group.
-        foreach($users as $id => $user) { // id is user id, always same as $user->teacher
+        foreach($users as $id => $user) { // id is userid NOT idnumber
 
             // Init flag.
             $foundgroup=false;
@@ -339,11 +339,11 @@ LEFT JOIN mdl_course_categories cp ON cp.id = cc.parent
         try {
             //Get a list of all instructors (of all kinds), program staff, approvers, and other RRU staff who should be enrolled.
             $sql = "
-SELECT DISTINCT u.idnumber AS teacherid
-           FROM mdl_role_assignments ra
-     INNER JOIN mdl_context cx ON cx.id = ra.contextid
-     INNER JOIN mdl_course co ON co.id = cx.instanceid
-     INNER JOIN mdl_user u ON u.id = ra.userid
+SELECT DISTINCT u.id, u.idnumber AS teacherid
+           FROM {role_assignments} ra
+     INNER JOIN {context} cx ON cx.id = ra.contextid
+     INNER JOIN {course} co ON co.id = cx.instanceid
+     INNER JOIN {user} u ON u.id = ra.userid
           WHERE roleid IN (3, 4, 9, 10, 12, 13, 15, 17, 18, 20) -- editing, non-editing, live course instructors; CTET Admins; Approvers; Help Desk; Program Directors; Program Leads; PAs
             AND cx.contextlevel in (40, 50) -- course or category
             AND co.idnumber <> '' -- course must have an idnumber value
