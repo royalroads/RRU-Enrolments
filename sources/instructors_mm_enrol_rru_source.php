@@ -18,7 +18,7 @@
 /**
  * RRU enrolment , enrol instructors as students in Mastering Moodle Course
  *
- * 2017-02-21
+ * 2017-02-22
  * @package    enrol
  * @subpackage rru
  * @author     Gerald Albion, Andy Zoltay
@@ -122,13 +122,13 @@ class instructors_mm_enrol_rru_source extends enrol_rru_source {
         // Get all of the course categories and parent categories in which the user has a non-student role.
         $sql = "
 SELECT DISTINCT cc.id, cc.name AS 'category', cp.name AS 'parentcat'
-     FROM mdl_user u
-LEFT JOIN mdl_role_assignments ra ON u.id = ra.userid
-LEFT JOIN mdl_role r ON r.id = ra.roleid
-LEFT JOIN mdl_context cx ON cx.id = ra.contextid
-LEFT JOIN mdl_course co ON co.id = cx.instanceid
-LEFT JOIN mdl_course_categories cc ON cc.id = co.category
-LEFT JOIN mdl_course_categories cp ON cp.id = cc.parent
+     FROM {user} u
+LEFT JOIN {role_assignments} ra ON u.id = ra.userid
+LEFT JOIN {role} r ON r.id = ra.roleid
+LEFT JOIN {context} cx ON cx.id = ra.contextid
+LEFT JOIN {course} co ON co.id = cx.instanceid
+LEFT JOIN {course_categories} cc ON cc.id = co.category
+LEFT JOIN {course_categories} cp ON cp.id = cc.parent
     WHERE u.id = ?
       AND cx.contextlevel = 50
       AND ra.roleid <> 5";
@@ -358,26 +358,9 @@ SELECT DISTINCT u.id, u.idnumber AS teacherid
             return false;
         }
 
-
-
-        /*
-         * Prepare the enrolments output.
-         */
-        $coursename = 'Orientation to Teaching & Course Design';
-        try {
-            $courseidnum = $DB->get_field('course', 'idnumber', array('fullname'=>$coursename), MUST_EXIST); // The course id code (idnumber field)
-        } catch (Exception $e) {
-            $this->write_log("Unable to get idnumber for '{$coursename}'.\nException message: " . $e->getMessage() . "\n");
-            $this->write_log("Instructor and staff enrolments in {$coursename} will NOT be updated.\n");
-        }
-
-        if (!$courseidnum) {
-            $this->write_log("'{$coursename}' exists but unable to get idnumber.  Make sure the course has a non-blank idnumber.\n");
-            $this->write_log("Instructor and staff enrolments in {$coursename} will NOT be updated.\n");
-            $courseid = false; // Could not find course.
-        } else {
-            $courseid = $DB->get_field('course', 'id', array('fullname'=>$coursename), MUST_EXIST);
-        }
+		// Get the course ID for enrolment.
+		$courseidnum = 'TEACHING_COURSE_DESIGN';
+        $courseid = $DB->get_field('course', 'id', array('idnumber'=>$courseidnum), MUST_EXIST);
 
         // Assign the groups.
         $this->assigngroups($result, $courseid);
@@ -385,7 +368,7 @@ SELECT DISTINCT u.id, u.idnumber AS teacherid
         // Get the role id for students
         $studentroleid = $DB->get_field('role', 'id', array('archetype'=>'student'), MUST_EXIST);
 
-        // Get the data in the correct format for enrol_rru plugin to deal with it.
+        // Prepare the return array.
         $enrolments = array();
         foreach($result as $id => $record) {
             // Format enrolments.
@@ -393,7 +376,6 @@ SELECT DISTINCT u.id, u.idnumber AS teacherid
             $enrolment['chrCourseCode'] = $courseidnum;
             $enrolment['intUserCode'] = $record->teacherid;
             $enrolment['intRoleID'] = $studentroleid;
-
             $enrolments[] = $enrolment;
         }
 
