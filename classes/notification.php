@@ -22,6 +22,7 @@
 * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
+use enrol_rru\dbConnection;
 
 
 /**
@@ -32,7 +33,7 @@ class notification {
 	private static $from = "moodleadmin@royalroads.ca";
 	private static $subject = "RRU Enrolment Notification";
 
-
+	$conn = dbConnection::get();
 	/**
 	* Get list of address from enrol settings page
 	* Extract a list of valid email address
