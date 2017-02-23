@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -42,7 +41,7 @@ class instructors_mm_enrol_rru_source extends enrol_rru_source {
      * date    2012-09-12
      * @return array
      */
-    public function get_enrolment_settings(){
+    public function get_enrolment_settings() {
         return(array());
     }
 
@@ -88,29 +87,41 @@ class instructors_mm_enrol_rru_source extends enrol_rru_source {
     }
 
     /**
-     * Resolves a category name into a short school code used in the group's idnumber field.
+     * Maps a category name to a short school code used in the group's idnumber field.
+     *
      * @param str $catname the category name
      * @return str the school code or bool false if not found;
      */
     private function getschoolcode($catname) {
         switch ($catname) {
-            case 'CCWI'         : return 'CCWI';
-            case 'INTRDISCPL'   : return 'CIS';
-            case 'ISC'          : return 'ISC';
-            case 'COMM-CULTURE' : return 'SCC';
-            case 'ENVIRONMENT'  : return 'SES';
-            case 'EDUTECH'      : return 'SET';
-            case 'CONFLICT'     : return 'SHS';
+            case 'CCWI'         :
+                return 'CCWI';
+            case 'INTRDISCPL'   :
+                return 'CIS';
+            case 'ISC'          :
+                return 'ISC';
+            case 'COMM-CULTURE' :
+                return 'SCC';
+            case 'ENVIRONMENT'  :
+                return 'SES';
+            case 'EDUTECH'      :
+                return 'SET';
+            case 'CONFLICT'     :
+                return 'SHS';
             case 'MGMT-GRAD'    :
-            case 'MGMT-UGRAD'   : return 'SOB';
-            case 'LEADERSHIP'   : return 'SOLS';
-            case 'TOURHOSPMGMT' : return 'STHM';
-            default             : return false;
+            case 'MGMT-UGRAD'   :
+                return 'SOB';
+            case 'LEADERSHIP'   :
+                return 'SOLS';
+            case 'TOURHOSPMGMT' :
+                return 'STHM';
+            default             :
+                return false;
         }
     }
 
     /**
-     * Fetches all the schools in which the user has some kind of instructor role
+     * Fetches all the schools in which the user has a non-student role
      *
      * @param int $userid ID of the user in question
      * @return mixed array the schools (array of strings) or bool false if error
@@ -137,7 +148,7 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
         $result = array();
 
         // Iterate the found categories for this user.
-        foreach($resultset as $row) {
+        foreach ($resultset as $row) {
 
             // Try to resolve the school from the course category.
             $schoolcode = $this->getschoolcode($row->category);
@@ -155,7 +166,7 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
 
             // We have a school code (as used in the course groups' idnumber column).  Add it to the list if not already there.
             if (!in_array($schoolcode, $result)) {
-                $result[]=$schoolcode;
+                $result[] = $schoolcode;
             }
         }
 
@@ -174,15 +185,15 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
      * @return array the idnumbers and ids or false on error
      * @global object $DB The Moodle DML API object
      */
-    function get_groupids($courseid) {
-         global $DB;
-         $sql = 'SELECT idnumber, id FROM {groups} WHERE courseid = ?';
-         try {
-             $result = $DB->get_records_sql($sql, array($courseid));
-         } catch (Exception $e) {
-             return false;
-         }
-         return $result;
+    private function get_groupids($courseid) {
+        global $DB;
+        $sql = 'SELECT idnumber, id FROM {groups} WHERE courseid = ?';
+        try {
+            $result = $DB->get_records_sql($sql, array($courseid));
+        } catch (Exception $e) {
+            return false;
+        }
+        return $result;
     }
 
     /**
@@ -194,9 +205,9 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
      * @param array &$groupids A reference array associating group idnumber with group id
      * @return false on error (group idnumber not in $groupids)
      */
-    function add_to_groupsarray($userid, $groupidnumber, &$groups, &$groupids) {
+    private function add_to_groupsarray($userid, $groupidnumber, &$groups, &$groupids) {
         if (array_key_exists($groupidnumber, $groupids)) {
-            $groups[] = array('uid'=>$userid, 'gid'=>$groupids[$groupidnumber]->id);
+            $groups[] = array('uid' => $userid, 'gid' => $groupids[$groupidnumber]->id);
             return true;
         } else {
             return false;
@@ -216,13 +227,12 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
         global $DB;
 
         // Is the user already a member of the group?
-
-        $result = $DB->record_exists('groups_members', array('groupid'=>$gid, 'userid'=>$uid));
+        $result = $DB->record_exists('groups_members', array('groupid' => $gid, 'userid' => $uid));
         if ($result) { // We already have this user in this group.
             return;
         }
 
-        // We don't have this user in this group yet, so add it.
+        // We don't have this user in this group yet, so add.
         $data = new stdClass();
         $data->userid = $uid;
         $data->groupid = $gid;
@@ -245,42 +255,42 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
      */
     private function assigngroups($users, $courseid) {
 
-        // Validation
-        if (!$courseid) { // Invalid course id
+        // Validation.
+        if (!$courseid) { // Invalid course id.
             return false;
         }
 
         // Fetch group ids for the course.
         $groupids = $this->get_groupids($courseid);
 
-        // One array handles all group memberships.  array([userid, group id])
+        // One array handles all group memberships - array([userid, group id]).
         $groupassignments = array();
 
         // Build a list of users for each group.
-        foreach($users as $id => $user) { // id is userid NOT idnumber
+        foreach ($users as $id => $user) { // id is userid NOT idnumber.
 
             // Init flag.
-            $foundgroup=false;
+            $foundgroup = false;
 
-            // Role groups
+            // Role groups.
             $roles = $this->getuserroles($id);
             if ($roles) {
                 foreach ($roles as $roleid) {
                     switch ($roleid) {
-                        case 12 : // Program Associate = "Program Staff" group
+                        case 12 : // Program Associate = "Program Staff" group.
                             if ($this->add_to_groupsarray($id, 'PROGRAMSTAFF', $groupassignments, $groupids)) {
                                 $foundgroup = true;
                             }
                             break;
                         case 15:
-                        case 17: // Programlead-director or programlead_directorisc = "Program Heads" group
+                        case 17: // Programlead-director or programlead_directorisc = "Program Heads" group.
                             if ($this->add_to_groupsarray($id, 'PROGRAMHEADS', $groupassignments, $groupids)) {
                                 $foundgroup = true;
                             }
                             break;
                         case 9:
                         case 11:
-                        case 13: // CTETAdmin, Library, Help Desk = "Other RRU Staff" group
+                        case 13: // CTETAdmin, Library, Help Desk = "Other RRU Staff" group.
                             if ($this->add_to_groupsarray($id, 'OTHERRRUSTAFF', $groupassignments, $groupids)) {
                                 $foundgroup = true;
                             }
@@ -289,11 +299,11 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
                     }
                 }
             }
-            // School groups
-            $schools = $this->getuserschools($id);
 
-            if ($schools) { // There might not be any schools for this user
-                foreach($schools as $school) {
+            // School groups.
+            $schools = $this->getuserschools($id);
+            if ($schools) { // There might not be any schools for this user.
+                foreach ($schools as $school) {
                     switch ($school) {
                         case 'CCWI':
                         case 'CIS':
@@ -313,7 +323,7 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
                 }
             }
 
-            // If no roles or schools, add "Other RRU Staff"
+            // If no roles or schools, add "Other RRU Staff".
             if (!$foundgroup) {
                 $this->add_to_groupsarray($id, 'OTHERRRUSTAFF', $groupassignments, $groupids);
             }
@@ -333,44 +343,44 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
      * @global object $DB - Moodle database object
      * @return array of db records or false if orror occurs
      */
-    private function fetch_instructor_mm_enrolments(){
+    private function fetch_instructor_mm_enrolments() {
         global $DB;
 
         try {
-            //Get a list of all instructors (of all kinds), program staff, approvers, and other RRU staff who should be enrolled.
+            // Get a list of all instructors (of all kinds), program staff, approvers,
+            // and other RRU staff who should be enrolled.
             $sql = "
 SELECT DISTINCT u.id, u.idnumber AS teacherid
            FROM {role_assignments} ra
      INNER JOIN {context} cx ON cx.id = ra.contextid
      INNER JOIN {course} co ON co.id = cx.instanceid
      INNER JOIN {user} u ON u.id = ra.userid
-          WHERE roleid IN (3, 4, 9, 10, 12, 13, 15, 17, 18, 20) -- editing, non-editing, live course instructors; CTET Admins; Approvers; Help Desk; Program Directors; Program Leads; PAs
-            AND cx.contextlevel in (40, 50) -- course or category
-            AND co.idnumber <> '' -- course must have an idnumber value
-            AND u.idnumber <> '' -- user idnumber must not be blank
+          WHERE roleid IN (3, 4, 9, 10, 12, 13, 15, 17, 18, 20)
+            AND cx.contextlevel in (40, 50)
+            AND co.idnumber <> ''
+            AND u.idnumber <> ''
        ORDER BY co.fullname, u.lastname;
              ";
 
             $result = $DB->get_records_sql($sql);
-        }
-        catch(dml_exception $e) {
+        } catch (dml_exception $e) {
             $this->write_log("Failed to get course participants from database - DB error: [$e->debuginfo]", true);
             return false;
         }
 
-		// Get the course ID for enrolment.
-		$courseidnum = 'TEACHING_COURSE_DESIGN';
-        $courseid = $DB->get_field('course', 'id', array('idnumber'=>$courseidnum), MUST_EXIST);
+        // Get the course ID for enrolment.
+        $courseidnum = 'TEACHING_COURSE_DESIGN';
+        $courseid = $DB->get_field('course', 'id', array('idnumber' => $courseidnum), MUST_EXIST);
 
         // Assign the groups.
         $this->assigngroups($result, $courseid);
 
-        // Get the role id for students
-        $studentroleid = $DB->get_field('role', 'id', array('archetype'=>'student'), MUST_EXIST);
+        // Get the role id for students.
+        $studentroleid = $DB->get_field('role', 'id', array('archetype' => 'student'), MUST_EXIST);
 
         // Prepare the return array.
         $enrolments = array();
-        foreach($result as $id => $record) {
+        foreach ($result as $id => $record) {
             // Format enrolments.
             $enrolment = array();
             $enrolment['chrCourseCode'] = $courseidnum;
