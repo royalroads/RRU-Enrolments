@@ -22,29 +22,25 @@
 * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-use enrol_rru\dbConnection;
 
-
-/**
-* Primary notification object for RRU Enrolment plugin
-*/
 class notification {
 
 	private static $from = "moodleadmin@royalroads.ca";
 	private static $subject = "RRU Enrolment Notification";
+	private static $body = "Error - notification body not set! Please contact a Programmer!";
 
 	/**
 	* Get list of address from enrol settings page
 	* Extract a list of valid email address
-	* @return $recipients - array of valid email addresses
+	* @return array $recipients - valid email addresses
 	*/
 	private static function getRecipients() {
 		
 		$recipients = array();
 
-		// We need the lib that allows us a quick api to grab config
-		require_once(dirname(__FILE__) . '/../../../lib/moodlelib.php');
-		// Grab the sync_notification setting, contain a list of emails
+		// // We need the lib that allows us a quick api to grab config
+		// require_once(dirname(__FILE__) . '/../../../lib/moodlelib.php');
+		// Grab the sync_notification setting, contain a list of email addresses
 		$settings = get_config('enrol_rru');
 		$raw_list =$settings->sync_notification;
 
@@ -61,94 +57,36 @@ class notification {
 
 
 	/**
-	* Accept a list of orphaned courses
+	* Send a notification to set addresses
 	* Send email to set addresses
-	* @param $orphans - array containing all relevant courses
 	* @param $subject - string to be used as subject line in email
+	* @param $body - string to be used as the main content
 	* @return null
 	*/
-	public static function send($orphans,$subject = null) {
+	public static function send($subject,$body) {
 
 
 		/**
-		* First, we need to get a list 
-		* of all courses that EXIST in Agresso
-		* 
-		* We are using a special Stored Procedure to get this data
-		* Let's setup that up now ..
-		*/
-		$conn = dbConnection::get();
-		$stored_procedure = "Learn.usp_GetCurrentCourses";
-		$result = mssql_query("EXEC $stored_procedure", $conn);
-
-		/**
-		* If for whatever reason we can't get data for comparison
-		* we need to stop and notify of this issue ..
-		*/
-		if(!$result) {
-			// To-do
-			// Break out mail and logic class apart
-			// Send this notification here
-		}
-
-		// Initialize our list of courses that exist in our SIS
-		$rru_courses = array();
-		// Quick way to checking whether to send an email at all
-		$real_orphans_exist = false; 
-		//  Populate our rru courses
-		while($row = mssql_fetch_assoc($result)) {
-			$rru_courses[] = $row['strIDNumber'];
-		}
-
-		/**
-		* Now, let's create the email itself
+		* First, let's set some headers
 		*/
 		$headers = "From:" . self::$from . "\r\n";		
 		$headers .= "MIME-VERSION: 1.0\r\n";
 		$headers .= "Content-type: text/html\r\n";
 
-		// Set some content ...
-		$content = array(
-			'heading' => 	"<h1>RRU Enrolment Error</h1>",
-			'body' => 		"The following courses exist in your SIS, but not in Moodle.<br>
-							Consequently, no enrollments in these courses occurred!<p></p>"
-		);
 
-		// Add content to email
-		$body = $content['heading'] . $content['body'];
-		foreach($orphans AS $orphan) {
-
-			/**
-			* We need to compare each orphan
-			* against our list of legitimate courses
-			* Add to body only if exists there 
-			*/
-
-			if(in_array($orphan,$rru_courses)) {
-				$body .= $orphan . "<br>";
-				$real_orphans_exist = true;
-			}
-
-		}
-
-		// Update our email subject line if set
+		// Update our email subject and body if set
 		$subject !== null ? self::$subject = $subject : '';
+		$body !== null ? self::$body = $body : '';
 
 		/**
-		* OK we have an email, a subject and from
+		* OK we have a subject, a body, and a "from"
 		* All we need is a list to "to's"...
 		*/
 		$recipients = self::getRecipients();
 
-
-		/**
-		* If real orphans exist,
-		* we send to each address ...
-		*/
-		if($real_orphans_exist == true) {
-			foreach($recipients AS $to) {
-				mail($to,self::$subject,$body,$headers);
-			}
+		// And now we notify!
+		foreach($recipients as $to) {
+			mail($to,self::$subject,self::$body,$headers);
 		}
 	
 	}

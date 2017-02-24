@@ -24,34 +24,27 @@
 */
 
 
-class dbConnection {
+class datamart {
 
 	/**
 	* Get a database connection
-	* @param return - database connection
+	* @param return - database connection object
 	*/
 	public static function get() {
 		
-		// Get connection info.
-		$port = '1433'; // MS SQL Server port
+		$port = '1433'; 
 
-		// AZRevisit - where to move config settings?
+		// Grab connection details from settings page
 		$dbserver = get_config('enrol_rru', 'dbserver');
 		$dbname = get_config('enrol_rru', 'db');
 		$dbuser = get_config('enrol_rru', 'dbuser');
 		$dbpwd = get_config('enrol_rru', 'dbpwd');
 
-		// Confirm connection params are set.
-		if (!$dbserver or !$dbname or !$dbuser) {
+		if (!$mssqllink = mssql_connect($dbserver . ':' . $port,$dbuser,$dbpwd)) {
 		    return false;
 		}
 
-		if (!$mssqllink = mssql_connect($dbserver . ':' . $port, $dbuser, $dbpwd)) {
-		    $mserror = mssql_get_last_message();
-		    return false;
-		}
-
-		if (mssql_select_db ($dbname, $mssqllink)) {
+		if (mssql_select_db($dbname, $mssqllink)) {
 		    return $mssqllink;
 		} else {
 		    return false;
