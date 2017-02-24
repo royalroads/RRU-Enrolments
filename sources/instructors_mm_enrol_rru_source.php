@@ -240,7 +240,6 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
         $data->component = '';
         $data->itemid = 0;
         $DB->insert_record('groups_members', $data);
-
     }
 
     /**
@@ -359,6 +358,7 @@ SELECT DISTINCT u.id, u.idnumber AS teacherid
             AND cx.contextlevel in (40, 50)
             AND co.idnumber <> ''
             AND u.idnumber <> ''
+            AND u.email <> '.'
        ORDER BY co.fullname, u.lastname;
              ";
 
