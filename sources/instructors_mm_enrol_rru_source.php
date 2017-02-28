@@ -96,7 +96,7 @@ class instructors_mm_enrol_rru_source extends enrol_rru_source {
         switch ($catname) {
             case 'CCWI'         :
                 return 'CCWI';
-            case 'INTRDISCPL'   :
+            case 'INTRDISCIPL'  :
                 return 'CIS';
             case 'ISC'          :
                 return 'ISC';
