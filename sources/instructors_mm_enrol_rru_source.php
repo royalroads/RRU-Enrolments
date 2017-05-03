@@ -281,12 +281,15 @@ LEFT JOIN {course_categories} cp ON cp.id = cc.parent
                                 $foundgroup = true;
                             }
                             break;
+/*
+ * This rule has been disabled pending discussion on how we can correctly automate populating the Program Heads group.  The group will be manually populated until then.
                         case 15:
                         case 17: // Programlead-director or programlead_directorisc = "Program Heads" group.
                             if ($this->add_to_groupsarray($id, 'PROGRAMHEADS', $groupassignments, $groupids)) {
                                 $foundgroup = true;
                             }
                             break;
+*/
                         case 9:
                         case 11:
                         case 13: // CTETAdmin, Library, Help Desk = "Other RRU Staff" group.
